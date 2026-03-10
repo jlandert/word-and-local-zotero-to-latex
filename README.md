@@ -1,7 +1,7 @@
 # word_and_local_zotero_to_latex
 
-Convert a Word `.docx` with Zotero citations (Word field codes) into LaTeX, and
-replace citations with `\cite{...}` keys fetched from your **local Zotero**. Currently only works on Windows.
+Convert a Word `.docx` with Zotero and Mendeley citations (Word field codes) into LaTeX, and
+replace citations with `\cite{...}` keys fetched from your **local Zotero** (for Mendeley, the references have to be migrated to the local Zotero database before). Currently only works on Windows.
 
 You may need to enable Zotero local server by
 
