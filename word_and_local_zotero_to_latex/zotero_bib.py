@@ -12,8 +12,8 @@ def get_bibtex_from_zotero(title: str) -> str:
     Query local Zotero and return a BibTeX block (as text) for a title string.
     """
     zotero_client = zotero.Zotero(
-        library_id="0", # https://groups.google.com/g/zotero-dev/c/ElvHhIFAXrY/m/fA7SKKwsAgAJ?pli=1
-        library_type="user",
+        library_id="5640580", # https://groups.google.com/g/zotero-dev/c/ElvHhIFAXrY/m/fA7SKKwsAgAJ?pli=1
+        library_type="group",
         api_key=None,
         local=True,
     )
@@ -36,6 +36,7 @@ async def fetch_bibtex_for_titles(
 
     async def _one(title: str) -> tuple[str, str]:
         async with sem:
+            print("querying: ", title)
             bib = await asyncio.to_thread(get_bibtex_from_zotero, title)
             bib = bib.strip() if isinstance(bib, str) else str(bib).strip()
             return title, bib
@@ -45,7 +46,6 @@ async def fetch_bibtex_for_titles(
         t, bib = await fut
         if bib:
             results[t] = bib
-
     return results
 
 

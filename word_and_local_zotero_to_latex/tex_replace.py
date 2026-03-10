@@ -2,13 +2,13 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from .models import ZoteroField
+from .models import CitationField
 from .zotero_bib import bibtex_first_key
 
 
 def replace_placeholders_in_tex(
     tex_path: Path,
-    fields_by_placeholder: dict[str, list[ZoteroField]],
+    fields_by_placeholder: dict[str, list[CitationField]],
     *,
     verbose: bool = False,
 ) -> int:

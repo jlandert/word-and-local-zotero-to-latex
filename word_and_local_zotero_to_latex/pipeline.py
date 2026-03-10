@@ -3,8 +3,8 @@ from __future__ import annotations
 import asyncio
 from pathlib import Path
 
-from .models import ZoteroField
-from .pandoc_runner import check_pandoc_installation, run_pandoc_docx_to_latex
+from .models import CitationField
+from .pandoc_runner import run_pandoc_docx_to_latex
 from .tex_replace import replace_placeholders_in_tex
 from .word_patch import WordCitationPatcher
 from .zotero_bib import fetch_bibtex_for_titles
@@ -42,7 +42,7 @@ class WordToLatex:
         self.run_pandoc()
         self.replace_placeholders_in_tex(fields)
 
-    def gather_fields(self) -> dict[str, list[ZoteroField]]:
+    def gather_fields(self) -> dict[str, list[CitationField]]:
         patched_docx = self.output_folder / "patched.docx"
         patcher = WordCitationPatcher(
             word_path=self.word_path,
@@ -51,8 +51,8 @@ class WordToLatex:
         return patcher.patch_to_placeholders()
 
     def build_bib(
-        self, fields: dict[str, list[ZoteroField]]
-    ) -> dict[str, list[ZoteroField]]:
+        self, fields: dict[str, list[CitationField]]
+    ) -> dict[str, list[CitationField]]:
         # Collect unique titles across all placeholders.
         titles_set: set[str] = set()
         for fields_list in fields.values():
@@ -60,7 +60,7 @@ class WordToLatex:
                 title = (field.payload or {}).get("title")
                 if isinstance(title, str) and title:
                     titles_set.add(title)
-
+                    
         titles = sorted(titles_set)
         bib = asyncio.run(fetch_bibtex_for_titles(titles, workers=self.num_workers))
 
@@ -87,7 +87,7 @@ class WordToLatex:
             extract_media_dir=figures_dir,
         )
 
-    def replace_placeholders_in_tex(self, fields: dict[str, list[ZoteroField]]) -> None:
+    def replace_placeholders_in_tex(self, fields: dict[str, list[CitationField]]) -> None:
         tex_path = self.output_folder / "output.tex"
         replaced = replace_placeholders_in_tex(
             tex_path,

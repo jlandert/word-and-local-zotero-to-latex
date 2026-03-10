@@ -5,7 +5,7 @@ from typing import Any
 
 
 @dataclass(slots=True)
-class ZoteroField:
+class CitationField:
     # English-only comments are required by project rules.
     payload_raw: str  # Raw field code text (best-effort extracted)
     payload: dict[str, Any] | None  # Parsed payload (if valid)
