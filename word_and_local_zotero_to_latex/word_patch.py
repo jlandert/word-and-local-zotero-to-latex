@@ -101,17 +101,30 @@ class WordCitationPatcher:
             
             for sdt in docXML.element.xpath('//w:sdt'):
                 tag = sdt.find('.//w:tag', docXML.element.nsmap)
+                if tag is None:
+                    print("Warning: No tag extractable. Skipping.")
+                    continue
                 raw_code = tag.attrib.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}val','')
                 parsed = parse_mendeley_code(raw_code)
                 if not parsed:
+                    print("Warning: Raw code could not be parsed. Skipping.")
                     continue
                 
                 print("Found Mendeley reference") 
                 
                 # Find the index of the sdt inside its parent to know where to enter the text
                 parent = sdt.getparent()
-                while parent.tag != '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}p':
+                if parent is None:
+                    print("Warning: SDT element has no parent (root element?). Skipping.")
+                    continue
+                    
+                while parent is not None and parent.tag != '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}p':
                     parent = parent.getparent()
+                    
+                if parent is None:
+                    print("Warning: Could not find parent paragraph (<w:p>) for SDT. Skipping.")
+                    continue
+                
                 citation_id = parsed.get("citationID")
                 
                 # Define placeholder
@@ -146,7 +159,7 @@ class WordCitationPatcher:
                     )
                     
         except Exception as e:
-            print("No word file:", e)
+            print("Error:", e)
 
         print(f"Found {len(title_list)} refs")
         print(f"Found {len(set(title_list))} unique titles")
